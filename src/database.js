@@ -24,7 +24,6 @@ export class Database {
         return data
     }
 
-
     insert(table, data) {
         if (Array.isArray(this.#database[table])) {
             this.#database[table].push(data)
@@ -35,5 +34,42 @@ export class Database {
         this.#persist()
 
         return data
+    }
+
+    update(table, id, data) {
+        const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+        if (rowIndex > -1) {
+            const oldData = this.#database[table][rowIndex]
+
+            const newData = {
+                id,
+                title: data.title !== undefined ? data.title : oldData.title,
+                description: data.description !== undefined ? data.description : oldData.description,
+                completed_at: oldData.completed_at,
+                created_at: oldData.created_at,
+                updated_at: new Date()
+            }
+
+            this.#database[table][rowIndex] = newData
+            this.#persist()
+
+            return true
+        }
+
+        return false
+    }
+
+    delete(table, id) {
+        const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+        if (rowIndex > -1) {
+            this.#database[table].splice(rowIndex, 1)
+            this.#persist()
+
+            return true
+        }
+
+        return false
     }
 }
