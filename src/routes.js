@@ -36,10 +36,35 @@ export const routes = [
     }
   },
   {
+    method: 'PUT',
+    path: buildRoutePath('/tasks/:id'),
+    handler: (req, res) => {
+      const { id } = req.params
+      const { title, description } = req.body
+
+      const response = database.update('tasks', id, { title, description })
+
+      if (response) {
+        return res.writeHead(200).end('Tarefa alterada com sucesso!')
+      } else {
+        return res.writeHead(404).end('Tarefa não encontrada!')
+      }
+    }
+  },
+  {
     method: 'DELETE',
     path: buildRoutePath('/tasks/:id'),
     handler: (req, res) => {
-      return res.end()
+      const { id } = req.params
+
+      const response = database.delete('tasks', id)
+
+      if (response) {
+        return res.writeHead(204).end()
+      } else {
+        return res.writeHead(404).end('Tarefa não encontrada!')
+      }
+      
     }
   }
 ]
